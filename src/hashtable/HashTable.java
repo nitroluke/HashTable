@@ -1,4 +1,5 @@
 package hashtable;
+import java.util.Iterator;
 
 /**
  *
@@ -8,22 +9,26 @@ public class HashTable {
     public final int dummy = -99;
     public int size = 5;
     private int count = 0;
-    public final HashTableData[] table = new HashTableData[size];
+    public  HashTableData[] table = new HashTableData[size];
 
     public int code(int key) {
         return Math.abs(key % size);
     }
 
-    public boolean add(int key, String data) {
+    public boolean add(int key, String data, HashTableData[] array) {
         int hashCode = code(key);  // finding the hash value for placement
         int finder;
         
-//        if(){
-//            
-//        }
-        if (table[hashCode] == null) { // the array spot is empty insert it
+        if((count/array.length) >= .8){
+            finder = -1;
+            System.out.println("We need to reHash the array");
+            System.out.println("The current Array size is " + array.length);
+            count = 0;
+            reHash(array);
+        }
+        else if (array[hashCode] == null) { // the array spot is empty insert it
             System.out.println(key + " and " + data + " was placed in position " + hashCode);
-            table[hashCode] = new HashTableData(key, data);
+            array[hashCode] = new HashTableData(key, data);
             count = count + 1;
             finder = -1;
         } else { 
@@ -37,13 +42,13 @@ public class HashTable {
         while(finder != -1){
 //        while ((finder != -1) && (finder != hashCode)) {
             System.out.println("finder = " + finder);
-            if ((table[finder] == null)) { //if the spot is empty add the data
-                table[finder] = new HashTableData(key, data);
+            if ((array[finder] == null)) { //if the spot is empty add the data
+                array[finder] = new HashTableData(key, data);
                 count++;
                 System.out.println(key + " and " + data + " was placed in position " + finder);
                 finder = -1;
             } else { // go to the next item
-                if (finder == (table.length - 1)) {  // if we are at the end of the array
+                if (finder == (array.length - 1)) {  // if we are at the end of the array
                     System.out.println("We have reached the end of the array");
                     finder = 0;
                 } else { //increment finder and keep doing the loop
@@ -64,7 +69,7 @@ public class HashTable {
         
     }
     
-    public String find(int key){
+    public String search(int key){
         int finder;
         int hashCode = code(key);
         
@@ -100,10 +105,10 @@ public class HashTable {
     public void remove(int key){
         int finder;   // iterator
         // use the dummy 
-        int hashCode = code(key); // find the position in the array to place it
+        int hashCode = code(key); // find the position in the array to find it
         
         if(table[hashCode] == null){ // there is nothing to delete
-            System.out.println("That value is not in the hash table");
+            System.out.println("You cannot delete a value that is not there");
         }else if(table[hashCode].getKey() == key){  // you found the value, replace the value in there with a placeholder
             table[hashCode] = new HashTableData(dummy, "");
         }else{ // keep looking for the value
@@ -112,12 +117,23 @@ public class HashTable {
             }else{
                 finder = hashCode++;
             }
-                // possibly add another while look in here
+                // possibly add another while loop in here
         }
     }
 
     
-    public void reHash(){
+    public void reHash(HashTableData[] array){
+        size *= 2;
+        HashTableData[] reHashTable = new HashTableData[size];
+        for(int i = 0; i < table.length/2; i++){
+            if(array[i] == null){
+                i++;
+            }else{
+                add(array[i].getKey(),array[i].getData(),reHashTable);
+            }
+            i++;
+        }
+        table = reHashTable;
         
     }
 }

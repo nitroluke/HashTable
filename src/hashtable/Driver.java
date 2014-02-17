@@ -27,9 +27,9 @@ public class Driver {
         HashTable HT = new HashTable();
         while (in.hasNext()) {
             key = in.nextInt();
-            data = in.next();
+            data = in.next();   
             System.out.println("trying to add " + key + " " + data);
-            HT.add(key, data);
+            HT.add(key, data,HT.table);  
 
 //            int i = 0;
 //            for (HashTableData table : HT.table) {
